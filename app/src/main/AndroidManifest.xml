@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.taehun.test"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+    <!--여기 일단 패키지 한개 안넣었어 혹시몰라서--><!--   package="com.google.android.gms.location.sample.locationupdates" > -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!--인터넷 사용할 수 있는 권한, 네이버지도에서 현재위치를 gps를 통해 얻어 현위치로 옮기기 위한 권한-->
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--네이버 지도-->
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="lxbvfxiojg" />
+
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

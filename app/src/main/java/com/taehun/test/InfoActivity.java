@@ -1,10 +1,7 @@
 package com.taehun.test;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -20,10 +17,16 @@ public class InfoActivity extends FragmentActivity {
         back_button_2.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent intent=new Intent(InfoActivity.this, MainActivity.class);
-                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.not_move,R.anim.rightout);
             }
 
         });
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
+        overridePendingTransition(R.anim.not_move,R.anim.rightout);
     }
 }

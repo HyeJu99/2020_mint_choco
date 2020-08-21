@@ -1,9 +1,21 @@
 package com.taehun.test;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.content.Intent;
+import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+import com.google.android.material.navigation.NavigationView;
 
 import android.graphics.Color;
 import android.icu.text.IDNA;
@@ -29,23 +41,106 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+    NavigationView navigationView;
+    DrawerLayout drawerLayout;
 
+    ImageButton menu_button;
+
+    RadioButton radiobutton_1;
+    RadioButton radiobutton_2;
+    RadioGroup radioGroup;
+
+    Intent setting_intent;
+    Intent info_intent;
 
     private MapView mapView;
     private static NaverMap naverMap;
+    int cnt = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MapFragment mapFragment = (MapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
+        MapFragment mapFragment =
+                (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        setting_intent = new Intent(this, SettingActivity.class);
+        info_intent = new Intent(this, InfoActivity.class);
+
+        menu_button = (ImageButton) findViewById(R.id.menu_button);
+        navigationView = (NavigationView) findViewById(R.id.nav);
+        drawerLayout = (DrawerLayout) findViewById(R.id.layout_drawer);
+
+        radioGroup = (RadioGroup) findViewById(R.id.legend_banner);
+        radiobutton_1 = (RadioButton) findViewById(R.id.radiobutton_1);
+        radiobutton_2 = (RadioButton) findViewById(R.id.radiobutton_2);
+        radiobutton_1.setChecked(true);
+
+        //메뉴버튼 클릭하면 오른쪽에서 메뉴가 나옴
+        menu_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawerLayout.openDrawer(GravityCompat.END);
+            }
+
+        });
+
+        //item icon색조를 적용하지 않도록.. 설정 안하면 회색 색조
+        navigationView.setItemIconTintList(null);
+        //네비게이션뷰의 아이템을 클릭했을때
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.menu_setting:
+                        startActivity(setting_intent);
+                        overridePendingTransition(R.anim.rightin, R.anim.not_move);
+                        break;
+                    case R.id.menu_info:
+                        startActivity(info_intent);
+                        overridePendingTransition(R.anim.rightin, R.anim.not_move);
+                        break;
+                    case R.id.menu_close:
+                        drawerLayout.closeDrawer(navigationView);
+                        break;
+                }
+                return false;
+            }
+        });
+
+        initLoadDB();
+    }
+
+    List<Infected> infectedList = new ArrayList<Infected>();
+
+    private void initLoadDB() {
+        DBManager mDBHelper = new DBManager(getApplicationContext());
+        mDBHelper.createDatabase();
+        mDBHelper.open();
+
+        infectedList = mDBHelper.getTableData(); //DB 값 적용하여 넣기
+        mDBHelper.close(); //DB 닫기
     }
 
     @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(navigationView);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    //여기까지 정리!: 1. 시작하자마자 비동기로 맵을 불러옴. 맵이 로딩됨....
+    //2. 메뉴버튼과 메뉴버튼 클릭시 이벤트 & 뒤로가기 이벤트를 구현
+    //3. 이제 바로 밑에 있는 onMapReady는 맵을 불러온 이후 실행되는 부분. 지도가 핸드폰에 표시 됨
+    @Override
     public void onMapReady(@NonNull NaverMap naverMap) { //현재위치 지도에 표시시켜주는 것
 
-        FusedLocationSource locationSource = new FusedLocationSource(this, 100);//구글이 권고. 이걸 쓰래 이게 내위치 찍어주는 거였나?기억이안남 ㅎㅎ
+        FusedLocationSource locationSource = new FusedLocationSource(this, 100);//구글이 권고. 이걸 쓰래
+        // 이게 내위치 찍어주는 거였나?기억이안남 ㅎㅎ
         naverMap.setLocationSource(locationSource);
         UiSettings uiSettings = naverMap.getUiSettings();
         uiSettings.setLocationButtonEnabled(true);
@@ -60,130 +155,144 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         // 사용자 동선 추가
         ArrayList<Users> userList = new ArrayList<Users>();
-        userList.add(new Users("유스퀘어 터미널", 35.160173, 126.879309, 8, 2, 4, 0));
-        userList.add(new Users("이삭토스트 유스퀘어점", 35.160525, 126.879121, 8, 2, 4, 0));
-        userList.add(new Users("카페베네 유스퀘어점", 35.160895, 126.878631, 8, 2, 4, 0));
-        userList.add(new Users("전남대 생활관 9동", 35.180941, 126.905435, 8, 2, 4, 0));
-        //8월 2일
-        userList.add(new Users("전남대 생활관 9동", 35.180941, 126.905435, 8, 3, 4, 0));
-        userList.add(new Users("공과대학 1호관", 35.179887, 126.910204, 8, 3, 4, 0));
-        userList.add(new Users("햇들마루", 35.180801, 126.910882, 8, 3, 3, 0));//확진자 왔다간 곳
-        userList.add(new Users("전남대 공대 1호관", 35.179887, 126.910204, 8, 3, 4, 0));
-        userList.add(new Users("파리바게트 전남대점", 35.176459, 126.912590, 8, 3, 3, 0));//동시간대에 갔다옴.
-        userList.add(new Users("전남대 우체국", 35.176932, 126.907514, 8, 3, 4, 0));
-        userList.add(new Users("전남대 생활관 9동", 35.180941, 126.905435, 8, 3, 4, 0));
-        //8월 3일
-        userList.add(new Users("전남대 생활관 9동", 35.180941, 126.905435, 8, 4, 4, 0));
-        userList.add(new Users("전남대 우체국", 35.176932, 126.907514, 8, 4, 3, 0));
-        userList.add(new Users("유스퀘어 터미널", 35.160173, 126.879309, 8, 4, 4, 0));
-
-
-        ArrayList<Infected> infectedList = new ArrayList<Infected>();//늦게 들어온 데이터가 나중에 찍히는거면 참 좋을텐데.. 그래야 가장 먼저 방문한 시간대가 나오는건데
-
-        infectedList.add(new Infected("gs25 첨단호반점", 35.213657, 126.847840, 7, 31, 4,120));
-        infectedList.add(new Infected("CGV 첨단점", 35.213990, 126.845723, 7, 31, 4,120));
-        infectedList.add(new Infected("JCOFFEE 첨단점", 35.213551, 126.848500, 7, 31, 4,120));
-        //7월 31일
-
-        infectedList.add(new Infected("역전할머니맥주 광주첨단점", 35.214651, 126.846547, 8, 1, 4,120));
-        infectedList.add(new Infected("락휴 테마파크", 35.213974, 126.844377, 8, 1, 4,120));
-        infectedList.add(new Infected("공원국밥 첨단점", 35.221379, 126.844266, 8, 1, 4,120));
-        //8월 1일
-
-        infectedList.add(new Infected("gs25 첨단호반점", 35.213657, 126.847840, 8, 2, 4,120));
-        infectedList.add(new Infected("전남대학교 생활관 3호관", 35.181134, 126.910640, 8, 2, 3, 120));
-        infectedList.add(new Infected("햇들마루", 35.180801, 126.910882, 8, 2, 3,120));
-        infectedList.add(new Infected("카페 일다", 35.177532, 126.914728, 8, 2, 3,123));
-        infectedList.add(new Infected("새벽달", 35.177493, 126.914567, 8, 2, 3,123));
-        infectedList.add(new Infected("위드 pc방", 35.182046, 126.909341, 8, 2, 3,123));
-        //8월 2일
-
-        infectedList.add(new Infected("전남대학교 생활관 3호관", 35.181134, 126.910640, 8, 3, 3,123));
-        infectedList.add(new Infected("스타벅스 전남대점", 35.177218, 126.912472, 8, 3, 3,123));
-        infectedList.add(new Infected("전남대 공대 7호관", 35.178271, 126.909178, 8, 3, 3,123));
-        infectedList.add(new Infected("파리바게트 전남대점", 35.176459, 126.912590, 8, 3, 3,123));
-        infectedList.add(new Infected("이은헤어센스", 35.176459, 126.912590, 8, 3, 3,123));
-        infectedList.add(new Infected("용봉서적", 35.174549, 126.913595, 8, 3, 3,123));
-        infectedList.add(new Infected("햇들마루", 35.180801, 126.910882, 8, 3, 3,123));
-        //8월 3일
-
-
-
-
+        ArrayList<Marker> results = new ArrayList<Marker>();//위치가 똑같을 경우 여기에 데이터를 넣어줄거.
 
         InfoWindow infoWindow = new InfoWindow();
+//여기부터
+        naverMap.setOnMapClickListener((coord, point) -> {
+            infoWindow.close();
+        });
 
-        Marker[] markers = new Marker[infectedList.size()];//마커 인스턴스들을 만들어줌
+// 마커를 클릭하면:
+        Overlay.OnClickListener listener = overlay -> {
+            Marker marker = (Marker) overlay;
 
-        for (int i= 0; i < infectedList.size();i++) {
+            if (marker.getInfoWindow() == null) {
+                // 현재 마커에 정보 창이 열려있지 않을 경우 엶
+                infoWindow.open(marker);
+            } else {
+                // 이미 현재 마커에 정보 창이 열려있을 경우 닫음
+                infoWindow.close();
+            }
+
+            return true;
+        };
+
+
+        userList.add(new Users(1, 20200802, "유스퀘어 터미널", 35.160173, 126.879309));
+        userList.add(new Users(2, 20200802, "이삭토스트 유스퀘어점", 35.160525, 126.879121));
+        userList.add(new Users(3, 20200802, "카페베네 유스퀘어점", 35.160895, 126.878631));
+        userList.add(new Users(4, 20200802, "전남대 생활관 9동", 35.180941, 126.905435));
+        //8월 2일
+        userList.add(new Users(5, 20200803, "전남대 생활관 9동", 35.180941, 126.905435));
+        userList.add(new Users(6, 20200803, "공과대학 1호관", 35.179887, 126.910204));
+        userList.add(new Users(7, 20200803, "햇들마루", 35.180801, 126.910882));//확진자 왔다간 곳
+        userList.add(new Users(8, 20200803, "전남대 공대 1호관", 35.179887, 126.910204));
+        userList.add(new Users(9, 20200803, "파리바게트 전남대점", 35.176459, 126.912590));//동시간대에 갔다옴.
+        userList.add(new Users(10, 20200803, "전남대 우체국", 35.176932, 126.907514));
+        userList.add(new Users(11, 20200803, "전남대 생활관 9동", 35.180941, 126.905435));
+        //8월 3일
+        userList.add(new Users(12, 20200804, "전남대 생활관 9동", 35.180941, 126.905435));
+        userList.add(new Users(13, 20200804, "전남대 우체국", 35.176932, 126.907514));
+        userList.add(new Users(14, 20200804, "유스퀘어 터미널", 35.160173, 126.879309));
+
+        Marker[] markers = new Marker[infectedList.size()];//마커 인스턴스들을 만들어줌 // 그리고 infectedList
+        // .size는 위에 데이터를 넣은 이후에 나오니까 변수 여기에 위치하게 됨, 싫으면 함수로 만들어야함 귀찮
+
+        for (int i = 0; i < infectedList.size(); i++) {
             markers[i] = new Marker();
-            markers[i].setPosition(new LatLng(infectedList.get(i).storeLat, infectedList.get(i).storeLong));
+            markers[i].setPosition(new LatLng(infectedList.get(i).storeLat,
+                    infectedList.get(i).storeLong));
             markers[i].setMap(naverMap);
-            markers[i].setCaptionText(infectedList.get(i).storeName);
+            markers[i].setCaptionText(infectedList.get(i).description);
             //markers[i].setIcon(MarkerIcons.BLACK);마커 색바꿔주는거. setIcon setIconTintColor 세트임!
             //markers[i].setIconTintColor(Color.RED);
             markers[i].setWidth(50);
             markers[i].setHeight(80);
-            //markers[i].setSubCaptionText("방문일자: " + infectedList.get(i).Month + "." + infectedList.get(i).Date);
             markers[i].setHideCollidedSymbols(true);//마커 뒤에 글자 없애주기
             markers[i].setHideCollidedCaptions(true);
+            markers[i].setOnClickListener(listener);
+
+            markers[i].setTag("방문일자: " + infectedList.get(i).dateTime + "\n" + infectedList.get(i).patId + "번 확진자");
+        }//여기가 만들어진 마커 인스턴스들을 화면에 보이게 찍어주는 부분.
 
 
-            markers[i].setTag("방문일자: "+infectedList.get(i).Month+"월"+infectedList.get(i).Date+"일\n"+infectedList.get(i).humanNum+"번 확진자");
-            Marker x= markers[i];//이게 왜있냐? 밑에 람다식은 final값만 들어가야함. 변수가 안되서 위에서 그냥 바꾸고 final로 바꿔준거임. 꼼수!
-            markers[i].setOnClickListener(overlay -> {
-                infoWindow.open(x);
-                return true;
-            });
-
-
-        }//여기가 확진자 데이터를 가지고 직접 마커를 찍어주는 기능.
-
-
-
-
-        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(getApplication()) {
+        infoWindow.setAdapter(new InfoWindow.DefaultTextAdapter(getApplication()) {//각 마커들한테 하나하나
+            // 말풍선을 달아줌
             @NonNull
             @Override
             public CharSequence getText(@NonNull InfoWindow infoWindow) {
-                return (CharSequence)infoWindow.getMarker().getTag();
+                return (CharSequence) infoWindow.getMarker().getTag();
             }
         });
 
 
-
-
-
-
-
-        ArrayList < Marker > results = new ArrayList<Marker>();//위치가 똑같을 경우 여기에 데이터를 넣어줄거.
-
-        int cnt = 0;
         for (int i = 0; i < userList.size(); i++) {//새로 들어온 확진자의 데이터 전수조사임. 일단 날짜부터 차근차근 체크
-            for( int j = 0 ; j< infectedList.size();j++) {
-                if (userList.get(i).Date + userList.get(i).Month*31 >= infectedList.get(j).Date + infectedList.get(j).Month*31) {//날짜 한꺼번에 처리. 어차피 누가 더 먼저왔냐 비교하는거니까 이정도만해도
-                    if(userList.get(i).District == infectedList.get(i).District){//동까지 같으면
-                        if(Math.pow((userList.get(i).storeLat - infectedList.get(j).storeLat),2)+Math.pow((userList.get(i).storeLong - infectedList.get(j).storeLong),2)<=0.0000001){//만분의1 제곱 원형태
-                            //마커 추가, 그리고 의문: 마커 찍어주는게 반복적으로 나오는데 이걸 하나의 함수처리 할 수는 없나?
-                            results.add(new Marker());
-                            results.get(cnt).setPosition(new LatLng(infectedList.get(j).storeLat, infectedList.get(j).storeLong));
-                            results.get(cnt).setMap(naverMap);
-                            results.get(cnt).setCaptionText(infectedList.get(j).storeName);
-                            results.get(cnt).setIcon(MarkerIcons.BLACK);
-                            results.get(cnt).setIconTintColor(Color.RED);
-                            results.get(cnt).setZIndex(10);
-                            results.get(cnt).setHideCollidedSymbols(true);
-                            results.get(cnt).setHideCollidedCaptions(true);
+            for (int j = 0; j < infectedList.size(); j++) {
+                if (userList.get(i).dateTime >= infectedList.get(j).dateTime) {
+                    //날짜 한꺼번에 처리. 어차피 누가 더 먼저왔냐 비교하는거니까 이정도만해도
+                    if (Math.pow((userList.get(i).storeLat - infectedList.get(j).storeLat),
+                            2) + Math.pow((userList.get(i).storeLong - infectedList.get(j).storeLong), 2) <= 0.0000001) {//만분의1 제곱 원형태
+                        //마커 추가, 그리고 의문: 마커 찍어주는게 반복적으로 나오는데 이걸 하나의 함수처리 할 수는 없나?
+                        results.add(new Marker());
+                        cnt++;
+                    }
+                    ;
 
-                            cnt++;
-                        };
-                    };
-                };
+                }
+                ;//동선이 겹쳤지만 그 부분 그냥 마커만 찍고 화면에 나타내지 않기. 왜냐, 초기 화면은 확진자만! 보여주는 거니까
 
             }
-        }
+        }//일단
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                if (checkedId == R.id.radiobutton_1) {//확진자 버튼을 클릭했을때
+                    for (int k = 0; k < cnt; k++) {
+                        results.get(k).setMap(null);
+
+                    }
+                    cnt = 0;
 
 
+                } else if (checkedId == R.id.radiobutton_2) {//비교 동선을 클릭했을때
+                    for (int i = 0; i < userList.size(); i++) {//새로 들어온 확진자의 데이터 전수조사임. 일단 날짜부터
+                        // 차근차근 체크
+                        for (int j = 0; j < infectedList.size(); j++) {
+                            if (userList.get(i).dateTime >= infectedList.get(j).dateTime) {//날짜
+                                // 한꺼번에 처리.
+                                // 어차피 누가 더 먼저왔냐 비교하는거니까 이정도만해도
+                                if (Math.pow((userList.get(i).storeLat - infectedList.get(j).storeLat), 2) + Math.pow((userList.get(i).storeLong - infectedList.get(j).storeLong), 2) <= 0.0000001) {//만분의1 제곱 원형태
+                                    //마커 추가, 그리고 의문: 마커 찍어주는게 반복적으로 나오는데 이걸 하나의 함수처리 할 수는 없나?
+                                    results.add(new Marker());
+                                    results.get(cnt).setPosition(new LatLng(infectedList.get(j).storeLat, infectedList.get(j).storeLong));
+                                    results.get(cnt).setMap(naverMap);
+                                    results.get(cnt).setCaptionText(infectedList.get(j).description);
+                                    results.get(cnt).setIcon(MarkerIcons.BLACK);
+                                    results.get(cnt).setIconTintColor(Color.RED);
+                                    results.get(cnt).setZIndex(10);
+                                    results.get(cnt).setHideCollidedSymbols(true);
+                                    results.get(cnt).setHideCollidedCaptions(true);
+                                    results.get(cnt).setWidth(60);
+                                    results.get(cnt).setHeight(96);
 
+                                    cnt++;
+                                }
+                                ;
+
+                            }
+                            ;
+
+                        }
+                        ;
+                    }
+                    ;
+
+                }
+
+            }
+        });
     }
 }

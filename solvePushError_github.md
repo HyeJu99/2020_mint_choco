@@ -1,7 +1,7 @@
 # [Git] Git Push 에러 해결하기 (error: failed to push some refs to...)
 
 
--   \$ git push 할때, 오류가 남
+### $ git push 할때, 오류가 남
 ###### 오류 메세지
 
 ```
@@ -10,11 +10,14 @@
 
 > 원인: remote 버전과 로컬의 버전이 달라서 충돌(Conflict)이 된 것
 
--   해결 방법
-	- remote에 있는 변경 사항을 pull로 내려받은 후,
-	- pull 받으면, 새로운 변경사항은 기본적으로 git이 자동 병합(auto merge)작업을 해줌
-	- 내 파일과 merge(병합, 합치기) 하여,
-	- 다시 push로 올림
+- - -
+
+### 해결 방법
+- remote에 있는 변경 사항을 pull로 내려받은 후,
+- pull 받으면, 새로운 변경사항은 기본적으로 git이 자동 병합(auto merge)작업을 해줌
+- 내 파일과 merge(병합, 합치기) 하여,
+- 다시 push로 올림
+
 1. $ git pull (remore name) (branch name)
 ```
 $ git pull origin master

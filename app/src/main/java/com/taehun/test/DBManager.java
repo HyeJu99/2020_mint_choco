@@ -84,7 +84,10 @@ public class DBManager {
                             storeLat,
                             storeLong));
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
 
                     /*// 커스텀 모델 생성
                     infected = new Infected();
@@ -100,6 +103,9 @@ public class DBManager {
 
                     // 리스트에 넣기
                     infectedList.add(infected);*/
+<<<<<<< HEAD
+>>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
+=======
 >>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
                 }
 
@@ -111,7 +117,10 @@ public class DBManager {
         }
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
     /*
     public DBManager(Context context, String name, SQLiteDatabase.CursorFactory factory,
                      int version){
@@ -127,5 +136,8 @@ public class DBManager {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
     }*/
+<<<<<<< HEAD
+>>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
+=======
 >>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
 }

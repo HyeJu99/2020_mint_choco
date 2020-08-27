@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.taehun.test"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+    android:foregroundServiceType="location">
     <!--여기 일단 패키지 한개 안넣었어 혹시몰라서--><!--   package="com.google.android.gms.location.sample.locationupdates" > -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.io.IOException;
@@ -60,7 +59,7 @@ public class DBManager {
             // 모델 넣을 리스트 생성
             List<Infected> infectedList = new ArrayList<Infected>();
 
-            // TODO : 모델 선언
+            // 모델 선언
             Infected infected = null;
 
             Cursor mCur = mDb.rawQuery(sql, null);
@@ -83,30 +82,6 @@ public class DBManager {
                     infectedList.add(new Infected(_id, patId, dateTime, address, description,
                             storeLat,
                             storeLong));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
-
-                    /*// 커스텀 모델 생성
-                    infected = new Infected();
-
-                    // Record 기술
-                    // id, name, account, privateKey, secretKey, Comment
-                    Infected.setId(mCur.getString(0));
-                    Infected.setName(mCur.getString(1));
-                    Infected.setAccount(mCur.getString(2));
-                    Infected.setPrivateKey(mCur.getString(3));
-                    Infected.setSecretKey(mCur.getString(4));
-                    Infected.setComment(mCur.getString(5));
-
-                    // 리스트에 넣기
-                    infectedList.add(infected);*/
-<<<<<<< HEAD
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
-=======
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
                 }
 
             }
@@ -116,28 +91,4 @@ public class DBManager {
             throw mSQLException;
         }
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
-    /*
-    public DBManager(Context context, String name, SQLiteDatabase.CursorFactory factory,
-                     int version){
-        super(context, name, factory, version);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-    }*/
-<<<<<<< HEAD
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
-=======
->>>>>>> f676d5afd111e328ea8562a3d18269ac27beb4d8
 }

@@ -39,8 +39,7 @@ $ git commit -m "충돌 해결"
 5. push
 ```
 $ git push (remore name) (branch name)
-```
-###### 예
-```
+
+//예
 $ git push origin master
 ```

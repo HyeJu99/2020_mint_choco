@@ -28,9 +28,19 @@ $ git pull origin master
 > (======= 부터 >>>>>>> a2f34950a0d63f35696cb34e1774b610dfc7d4d3 사이에 표시된 부분)가 remote 에서 pull 받은 내용
 >
 > 원하는 코드로 수정
-3. $ git add .
-4. $ git commit -m "충돌 해결"
-5. $ git pull (remore name) (branch name)
+3. add
 ```
-$ git pull origin master
+$ git add .
+```
+4. commit
+```
+$ git commit -m "충돌 해결"
+```
+5. push
+```
+$ git push (remore name) (branch name)
+```
+###### 예
+```
+$ git push origin master
 ```
